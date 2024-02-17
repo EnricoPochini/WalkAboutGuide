@@ -22,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     protected Button login_button;
     protected EditText input_password;
 
+    //connessione
+    private int portaLogin = 149;
+    private String ipServer = "10.0.2.2";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +41,8 @@ public class MainActivity extends AppCompatActivity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ThreadLogin threadLogin = new ThreadLogin(input_password.getText().toString());
-                threadLogin.start();
 
-
-                if(input_password.getText().toString().equals("Errore")){
-
-                    Toast.makeText(MainActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
-
-                }//if
-                else{
-
-                    Toast.makeText(MainActivity.this, "Login completato", Toast.LENGTH_SHORT).show();
-
-                    openMainMenu();
-
-                }//else
-
+                login(input_password.getText().toString());
 
             }
         });
@@ -69,55 +58,42 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    class ThreadLogin extends Thread {
+    //manda la password al server che irotrna il nome della guida oppure errore se c'é un errore
+    public String login(String passInserita) {
 
-        //connessione
-        private int portaLogin = 149;
-        private String ipServer = "10.0.2.2";
+        String guida = "Errore";
 
-        //login
-        private String inputPassword;
+        try {
 
-        public ThreadLogin(String inputPassword) {
-            this.inputPassword=inputPassword;
-        }//costruttore
+            Socket socket = new Socket(ipServer, portaLogin);
 
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(passInserita);
 
-        @Override
-        public void run() {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            guida = in.readLine();
 
-            login();
+            if(!guida.equals("Errore") && guida != null){
+
+                openMainMenu();
+                Toast.makeText(MainActivity.this, "Login completato", Toast.LENGTH_SHORT).show();
+
+            }//if
+            else{
+
+                Toast.makeText(MainActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+
+            }//else
+
+        } catch (IOException ignored) {
+
 
         }
 
-
-        //manda la password al server che irotrna il nome della guida oppure errore se c'é un errore
-        public String login() {
-
-            String guida = "Errore";
-
-            try {
-
-                Socket socket = new Socket(ipServer, portaLogin);
-
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                out.println(inputPassword);
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                guida = in.readLine();
-
-                input_password.setText(guida);
-
-            } catch (IOException ignored) {
-
-
-            }
-
-            return guida;
-
-        }
+        return guida;
 
     }
+
 
 
 
