@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private String ipServer = "10.0.2.2";
 
 
+    public String nominativoGuida = "errore";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 login(input_password.getText().toString());
 
             }
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
     }
+
     //endregion
 
 
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             guida = in.readLine();
 
             if(!guida.equals("Errore") && guida != null){
-
+                nominativoGuida = guida;
                 openMainMenu();
                 Toast.makeText(MainActivity.this, "Login completato", Toast.LENGTH_SHORT).show();
 
@@ -85,17 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
             }//else
 
+            in.close();
+            out.close();
+            socket.close();
+
         } catch (IOException ignored) {
 
-
         }
-
         return guida;
-
     }
-
-
-
-
 }
 

@@ -73,8 +73,6 @@ public class MainMenu extends AppCompatActivity {
 
         //endregion
 
-        //TODO ottieni nominativo guida
-
         //region ADD
 
         addVegetariano.setOnClickListener(new View.OnClickListener() {
