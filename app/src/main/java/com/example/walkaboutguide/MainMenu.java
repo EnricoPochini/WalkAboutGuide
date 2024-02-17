@@ -2,11 +2,14 @@ package com.example.walkaboutguide;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -14,7 +17,9 @@ public class MainMenu extends AppCompatActivity {
 
     int numTuristi;
 
-    //TODO capire il tipo di orario arrivo e aggiungere
+    //Orario arrivo (gestito come due int)
+    int oraArrivo;
+    int minutiArrivo;
 
     int numVegetariani = 0;
     int numVegani = 0;
@@ -23,6 +28,7 @@ public class MainMenu extends AppCompatActivity {
     //region UI
     EditText dysplayNumTuristi;
     EditText dysplayOrarioArrivo;
+    TimePickerDialog timePickerDialog;
 
     TextView displayNumVegetariani;
     TextView displayNumVegani;
@@ -44,7 +50,7 @@ public class MainMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        //region UI
+        //region UI_Assegnazione
         dysplayNumTuristi = findViewById(R.id.numeroTuristi);
         dysplayOrarioArrivo = findViewById(R.id.orarioArrivo);
 
@@ -119,7 +125,30 @@ public class MainMenu extends AppCompatActivity {
 
         //endregion{
 
+        //Set numero turisti
+        dysplayNumTuristi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numTuristi = Integer.parseInt(dysplayNumTuristi.getText().toString());
+            }
+        });
 
+        //Set orario
+        dysplayOrarioArrivo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                timePickerDialog = new TimePickerDialog(MainMenu.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        dysplayOrarioArrivo.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
+                        oraArrivo = hourOfDay;
+                        minutiArrivo = minute;
+                    }
+                }, 0, 0, false);
+                timePickerDialog.show();
+            }
+        });
 
     }
 
@@ -131,12 +160,6 @@ public class MainMenu extends AppCompatActivity {
         }
         return value-1;
     }
-
-    public void updateNumTuristi(){
-        numTuristi = Integer.parseInt(dysplayNumTuristi.getText().toString());
-    }
-
-    //TODO update orario arrivo
 
     //endregion
 }
