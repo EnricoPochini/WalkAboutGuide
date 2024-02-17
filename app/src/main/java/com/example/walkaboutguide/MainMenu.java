@@ -26,6 +26,7 @@ public class MainMenu extends AppCompatActivity {
     int numGlutenFree = 0;
 
     //region UI
+    TextView dysplayNominativoGuida;
     EditText dysplayNumTuristi;
     EditText dysplayOrarioArrivo;
     TimePickerDialog timePickerDialog;
@@ -51,6 +52,8 @@ public class MainMenu extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         //region UI_Assegnazione
+        dysplayNominativoGuida = findViewById(R.id.nominativoGuida);
+
         dysplayNumTuristi = findViewById(R.id.numeroTuristi);
         dysplayOrarioArrivo = findViewById(R.id.orarioArrivo);
 
@@ -69,6 +72,8 @@ public class MainMenu extends AppCompatActivity {
         removeGlutenFree = findViewById(R.id.removeGlutenFree);
 
         //endregion
+
+        //TODO ottieni nominativo guida
 
         //region ADD
 
@@ -123,15 +128,7 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
-        //endregion{
-
-        //Set numero turisti
-        dysplayNumTuristi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numTuristi = Integer.parseInt(dysplayNumTuristi.getText().toString());
-            }
-        });
+        //endregion
 
         //Set orario
         dysplayOrarioArrivo.setOnClickListener(new View.OnClickListener() {
@@ -151,8 +148,15 @@ public class MainMenu extends AppCompatActivity {
         });
 
     }
-
     //region AUSILIARI
+
+    /*public boolean unpdateOrarioArrivo(){
+
+        char[] orario =  dysplayOrarioArrivo.getText().toString().toCharArray();
+
+
+    }*/
+
 
     public int decrement(int value){
         if(value==0){
