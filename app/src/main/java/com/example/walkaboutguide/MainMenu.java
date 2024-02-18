@@ -31,8 +31,6 @@ public class MainMenu extends AppCompatActivity {
     private int numTuristi;
 
     //Orario arrivo (gestito come due int)
-    private int oraArrivo;
-    private int minutiArrivo;
 
     private int numVegetariani = 0;
     private int numVegani = 0;
@@ -101,7 +99,6 @@ public class MainMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(MainMenu.this, "Invio dati alla cucina", Toast.LENGTH_SHORT).show();
                 sendInfo();
                 reset();
 
@@ -204,18 +201,27 @@ public class MainMenu extends AppCompatActivity {
     //invia al server le info
     private void sendInfo(){
 
-        try(Socket server = new Socket(ip,porta);
-            PrintWriter out = new PrintWriter(server.getOutputStream(),true);
-        ){
+        if(!dysplayOrarioArrivo.getText().toString().isEmpty() && !dysplayOrarioArrivo.getText().toString().isEmpty()){
 
-            out.println(buildData());
+            Toast.makeText(MainMenu.this, "Invio dati alla cucina", Toast.LENGTH_SHORT).show();
+
+            try(Socket server = new Socket(ip,porta);
+                PrintWriter out = new PrintWriter(server.getOutputStream(),true);
+            ){
+
+                out.println(buildData());
 
 
-        }catch(IOException ignored){
+            }catch(IOException ignored){
 
 
-        }
+            }
 
+            return;
+
+        }//if
+
+        Toast.makeText(MainMenu.this, "Completa i campi prima di inviare i dati", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -246,8 +252,11 @@ public class MainMenu extends AppCompatActivity {
         dysplayOrarioArrivo.setText("");
         numTuristi =0;
         numVegani=0;
+        displayNumVegani.setText("0");
         numGlutenFree=0;
+        displayNumGlutenFree.setText("0");
         numVegetariani=0;
+        displayNumVegetariani.setText("0");
         displayInfoAggiuntive.setText("");
 
     }

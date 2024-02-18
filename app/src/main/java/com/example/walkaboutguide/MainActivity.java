@@ -8,6 +8,7 @@ import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -22,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     //componenti grafici
     protected Button login_button;
-    protected EditText input_password;
+    protected static EditText input_password;
+    protected static ProgressBar pBar;
 
     //connessione
-    private int portaLogin = 149;
-    private String ipServer = "192.168.1.10";
+    private static int portaLogin = 149;
+    private static String ipServer = "192.168.1.10";
     private static String nomeGuida;
 
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         login_button = findViewById(R.id.login_button);
         input_password = findViewById(R.id.password_input);
+        pBar = findViewById(R.id.progressBar);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -49,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(MainActivity.this, "Attendere...", Toast.LENGTH_SHORT).show();
-                nomeGuida = login(input_password.getText().toString());
-
+                //Toast.makeText(MainActivity.this, "Attendere...", Toast.LENGTH_SHORT).show();
+                login(input_password.getText().toString());
 
             }
         });
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //manda la password al server che ritorna il nome della guida oppure errore se c'é un errore
-    public String login(String passInserita) {
+    public void login(String passInserita) {
 
         String guida = "Errore";
 
@@ -87,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
             if(!guida.equals("Errore") && guida != null){
 
-                openMainMenu();
                 Toast.makeText(MainActivity.this, "Login completato", Toast.LENGTH_SHORT).show();
+                pBar.setVisibility(View.GONE);
+                openMainMenu();
 
             }//if
             else{
@@ -99,12 +102,15 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (IOException ignored) {
 
+            Toast.makeText(MainActivity.this, "impossibile raggiungere il server", Toast.LENGTH_LONG).show();
 
         }
 
-        return guida;
+        nomeGuida = guida;
 
     }
+
+
 
 
 
