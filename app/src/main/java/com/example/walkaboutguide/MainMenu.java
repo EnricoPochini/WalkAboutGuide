@@ -2,6 +2,7 @@ package com.example.walkaboutguide;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -13,27 +14,40 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class MainMenu extends AppCompatActivity {
 
-    int numTuristi;
+    //connessione al server
+    private final int porta = 150;
+    private String ip = "192.168.1.10";
+
+
+    private int numTuristi;
 
     //Orario arrivo (gestito come due int)
-    int oraArrivo;
-    int minutiArrivo;
+    private int oraArrivo;
+    private int minutiArrivo;
 
-    int numVegetariani = 0;
-    int numVegani = 0;
-    int numGlutenFree = 0;
+    private int numVegetariani = 0;
+    private int numVegani = 0;
+    private int numGlutenFree = 0;
 
     //region UI
     TextView dysplayNominativoGuida;
     EditText dysplayNumTuristi;
     EditText dysplayOrarioArrivo;
-    TimePickerDialog timePickerDialog;
+    //TimePickerDialog timePickerDialog;
 
     TextView displayNumVegetariani;
     TextView displayNumVegani;
     TextView displayNumGlutenFree;
+    EditText displayInfoAggiuntive;
 
     Button inviaDati;
 
@@ -46,6 +60,7 @@ public class MainMenu extends AppCompatActivity {
     FloatingActionButton removeGlutenFree;
     //endregion
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +75,7 @@ public class MainMenu extends AppCompatActivity {
         displayNumVegetariani = findViewById(R.id.numVegetariani);
         displayNumVegani = findViewById(R.id.numVegani);
         displayNumGlutenFree = findViewById(R.id.numGlutenFree);
+        displayInfoAggiuntive = findViewById(R.id.infoAggiuntive);
 
         inviaDati = findViewById(R.id.InviaDati);
 
@@ -73,9 +89,24 @@ public class MainMenu extends AppCompatActivity {
 
         //endregion
 
-        //TODO ottieni nominativo guida
+        //set nominativo guida
+        dysplayNominativoGuida.setText(dysplayNominativoGuida.getText()+" "+MainActivity.getNomeGuida());
+
 
         //region ADD
+
+
+        //bottone invia i dati
+        inviaDati.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(MainMenu.this, "Invio dati alla cucina", Toast.LENGTH_SHORT).show();
+                sendInfo();
+                reset();
+
+            }
+        });
 
         addVegetariano.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +162,7 @@ public class MainMenu extends AppCompatActivity {
         //endregion
 
         //Set orario
-        dysplayOrarioArrivo.setOnClickListener(new View.OnClickListener() {
+        /*dysplayOrarioArrivo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -144,8 +175,10 @@ public class MainMenu extends AppCompatActivity {
                     }
                 }, 0, 0, false);
                 timePickerDialog.show();
+
+
             }
-        });
+        });*/
 
     }
     //region AUSILIARI
@@ -166,4 +199,59 @@ public class MainMenu extends AppCompatActivity {
     }
 
     //endregion
+
+
+    //invia al server le info
+    private void sendInfo(){
+
+        try(Socket server = new Socket(ip,porta);
+            PrintWriter out = new PrintWriter(server.getOutputStream(),true);
+        ){
+
+            out.println(buildData());
+
+
+        }catch(IOException ignored){
+
+
+        }
+
+
+    }
+
+    //costruisce la stringa da inviare
+    private String buildData(){
+
+        StringBuilder info = new StringBuilder();
+
+        //nome guida
+        info.append(MainActivity.getNomeGuida() + "#");
+        //orario di arrivo
+        info.append("in arrivo per le: "+dysplayOrarioArrivo.getText().toString()+"#");
+        //numero turisti
+        info.append("Turisti: "+dysplayNumTuristi.getText().toString());
+        //info intolleranze
+        info.append(" Vegetariani: "+numVegetariani+"  Vegani: "+numVegani+"  Gluten free: "+numGlutenFree+"#");
+        //info aggiuntive
+        info.append(displayInfoAggiuntive.getText().toString()+"#");
+
+
+        return info.toString();
+    }
+
+    //resetta i campi dei dati
+    private void reset(){
+
+        dysplayNumTuristi.setText("");
+        dysplayOrarioArrivo.setText("");
+        numTuristi =0;
+        numVegani=0;
+        numGlutenFree=0;
+        numVegetariani=0;
+        displayInfoAggiuntive.setText("");
+
+    }
+
+
+
 }

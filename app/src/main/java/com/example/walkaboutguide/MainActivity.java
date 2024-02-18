@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -24,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     //connessione
     private int portaLogin = 149;
-    private String ipServer = "10.0.2.2";
+    private String ipServer = "192.168.1.10";
+    private static String nomeGuida;
 
 
     @Override
@@ -38,15 +41,24 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+
+        //per passare il nome della guida nell'altra schermata
+        Intent intent = new Intent(this, MainMenu.class);
+
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                login(input_password.getText().toString());
+                Toast.makeText(MainActivity.this, "Attendere...", Toast.LENGTH_SHORT).show();
+                nomeGuida = login(input_password.getText().toString());
+
 
             }
         });
     }
+
+
+    public static String getNomeGuida(){return nomeGuida;}
 
     //region Metodi Ausiliari
 
@@ -58,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    //manda la password al server che irotrna il nome della guida oppure errore se c'é un errore
+    //manda la password al server che ritorna il nome della guida oppure errore se c'é un errore
     public String login(String passInserita) {
 
         String guida = "Errore";
