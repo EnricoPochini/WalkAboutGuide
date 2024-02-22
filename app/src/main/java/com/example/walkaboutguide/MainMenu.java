@@ -25,7 +25,7 @@ public class MainMenu extends AppCompatActivity {
 
     //connessione al server
     private final int porta = 150;
-    private String ip = "192.168.1.10";
+    private String ip = "172.24.64.1";
 
 
     private int numTuristi;
@@ -158,34 +158,8 @@ public class MainMenu extends AppCompatActivity {
 
         //endregion
 
-        //Set orario
-        /*dysplayOrarioArrivo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                timePickerDialog = new TimePickerDialog(MainMenu.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        dysplayOrarioArrivo.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
-                        oraArrivo = hourOfDay;
-                        minutiArrivo = minute;
-                    }
-                }, 0, 0, false);
-                timePickerDialog.show();
-
-
-            }
-        });*/
 
     }
-    //region AUSILIARI
-
-    /*public boolean unpdateOrarioArrivo(){
-
-        char[] orario =  dysplayOrarioArrivo.getText().toString().toCharArray();
-
-
-    }*/
 
 
     public int decrement(int value){
@@ -195,7 +169,6 @@ public class MainMenu extends AppCompatActivity {
         return value-1;
     }
 
-    //endregion
 
 
     //invia al server le info
@@ -228,21 +201,16 @@ public class MainMenu extends AppCompatActivity {
     //costruisce la stringa da inviare
     private String buildData(){
 
-        StringBuilder info = new StringBuilder();
-
         //nome guida
-        info.append(MainActivity.getNomeGuida() + "#");
-        //orario di arrivo
-        info.append("in arrivo per le: "+dysplayOrarioArrivo.getText().toString()+"#");
-        //numero turisti
-        info.append("Turisti: "+dysplayNumTuristi.getText().toString());
-        //info intolleranze
-        info.append(" Vegetariani: "+numVegetariani+"  Vegani: "+numVegani+"  Gluten free: "+numGlutenFree+"#");
-        //info aggiuntive
-        info.append(displayInfoAggiuntive.getText().toString()+"#");
-
-
-        return info.toString();
+        return MainActivity.getNomeGuida() + "#" +
+                //orario di arrivo
+                "in arrivo per le: " + dysplayOrarioArrivo.getText().toString() + "#" +
+                //numero turisti
+                "Turisti: " + dysplayNumTuristi.getText().toString() +
+                //info intolleranze
+                " Vegetariani: " + numVegetariani + "  Vegani: " + numVegani + "  Gluten free: " + numGlutenFree + "#" +
+                //info aggiuntive
+                displayInfoAggiuntive.getText().toString() + "#";
     }
 
     //resetta i campi dei dati
